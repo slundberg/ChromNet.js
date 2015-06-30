@@ -40,9 +40,9 @@
 <feature-network nodes="presentedNodes" links="presentedLinks" type-map="typeMap" selected-node="selectedTrack" hover-node="hoverNode" hover-edge="hoverEdge"></feature-network>
 
 <div id="blankScreenMessage" ng-hide="presentedNodes.length || searchString">
-  Type to search {{leafCount}} {{customData ? 'data' : 'ENCODE ChIP-seq'}} tracks, or try an example query such as <a href ng-click="searchString = 'EZH2'">EZH2</a>, <a href ng-click="searchString = 'H3K4me3 K562'">H3K4me3 K562</a>, or <a href ng-click="searchString = 'MYC GM12878'">MYC GM12878</a>.<br>
+  <span style="color: #333">Type to search {{leafCount}} {{customData ? 'data' : 'ENCODE ChIP-seq'}} tracks, or try an example query such as <a href ng-click="searchString = 'EZH2'">EZH2</a>, <a href ng-click="searchString = 'H3K4me3 K562'">H3K4me3 K562</a>, or <a href ng-click="searchString = 'MYC NB4'">MYC NB4</a>.</span><br>
   <br>
-  <span style="font-size: 12px;">ChromNet is designed to identify direct interactions between ChIP-seq datasets, which are correlations unique to a pair of variables that cannot be explained by any other dataset in the database. For more details see paper to come... Software to incorporate custom data is available on <a href="https://github.com/slundberg/ChromNet.jl" target="_top">GitHub</a>.</span><br>
+  <div style="font-size: 13px; text-align: justify;">ChromNet is designed to identify direct interactions between ChIP-seq datasets, which are correlations unique to a pair of variables that cannot be explained by any other dataset in the database. ChromNet simultaneously displays both a hierarchical clustering of the data represented by color intensity, and direct interactions between groups represented by edges. For more details and raw data see paper to come. Source code for both the <a href="https://github.com/slundberg/ChromNet.js" target="_top">client interface</a> and to <a href="https://github.com/slundberg/ChromNet.jl" target="_top">generate custom ChromNet networks</a> is available on GitHub.</div><br>
   <br>
   <br>
 <!--   <div class="well" style="color: #000; padding: 15px;">
