@@ -1,0 +1,147 @@
+<div id="topHeader"></div>
+
+<!-- https://jquerytools.github.io/documentation/rangeinput/index.html might help us improve this (so it looks the same on all platforms)-->
+<div id="thresholdValue">{{threshold | number:2}}</div>
+<input id="thresholdRange" ng-model="threshold" type="range" step="0.01" min="0.03" max="{{maxRangeBound}}">
+<div id="rightRangeLabel">sparse</div>
+<div id="leftRangeLabel">dense</div>
+
+<div id="settingsBacking" ng-show="settingsOpen" ng-click="settingsOpen = false"></div>
+<div id="settingsPanel" ng-show="settingsOpen">
+  cluster results by
+  <select ng-model="groupedType">
+    <option value="cellType">Cell Type</option>
+    <option value="lab">Lab</option>
+    <option value="organism">Organism</option>
+    <option value="treatments">Treatments</option>
+    <option value="lifeStage">Life Stage</option>
+    <option value="cellTypeAndTreatments">Cell Type and Treatments</option>
+  </select><br/>
+  <br/>
+  <!-- <input type="checkbox" ng-model="showCrossLinks" /> show links between clusters<br/>
+  <br/> -->
+  <input type="checkbox" ng-model="includeNearby" /> include nodes connected to search matches<br/>
+  <br>
+  <input type="checkbox" ng-model="markBioGRIDEdges" /> mark edges representing known interactions in BioGRID<br/>
+  <br>
+  show no more than <input type="text" size="4" ng-model="maxMatches" /> nodes to allow for smooth animation<br/>
+<!--   <br>
+  <div style="text-align: center; border-top: 1px #bbb solid; padding-top: 10px">
+  load a custom group graphical model<br>
+  <center><input type="file" /></center>
+  </div> -->
+</div>
+<img id="settingsIcon" src="/images/cog_small.png" ng-click="settingsOpen = !settingsOpen" />
+<img id="downloadIcon" src="/images/glyphicons-365-cloud-download.png" ng-click="downloadGraph()" />
+
+<div id="searchBoxWrapper"><div ng-show="searchString != '' && numMatches <= maxMatches" style="position: absolute; margin-left: -50px; right: 0px; overflow: visible; padding: 4px; text-align: right; padding-right: 10px; padding-top: 5px; color: #aaa; font-size: 14px;">{{numMatches}} matches</div><input type="text" id="searchBox" style="" ng-model="searchString" autofocus placeholder="type to search..."/></div>
+<img id="linkLogo" src="/images/chromNetLogo.png" ng-click="searchString = ''" />
+
+<feature-network nodes="presentedNodes" links="presentedLinks" type-map="typeMap" selected-node="selectedTrack" hover-node="hoverNode" hover-edge="hoverEdge"></feature-network>
+
+<div id="blankScreenMessage" ng-hide="presentedNodes.length || searchString">
+  Type to search {{leafCount}} {{customData ? 'data' : 'ENCODE ChIP-seq'}} tracks, or try an example query such as <a href ng-click="searchString = 'EZH2'">EZH2</a>, <a href ng-click="searchString = 'H3K4me3 K562'">H3K4me3 K562</a>, or <a href ng-click="searchString = 'MYC GM12878'">MYC GM12878</a>.<br>
+  <br>
+  <span style="font-size: 12px;">ChromNet is designed to identify direct interactions between ChIP-seq datasets, which are correlations unique to a pair of variables that cannot be explained by any other dataset in the database. For more details see paper to come... Software to incorporate custom data is available on <a href="https://github.com/slundberg/ChromNet.jl" target="_top">GitHub</a>.</span><br>
+  <br>
+  <br>
+<!--   <div class="well" style="color: #000; padding: 15px;">
+    ChromNet scripts
+  </div> -->
+
+  <div id="customNetworkDropZone" style="color: {{uploadColor}}; border-color: {{uploadColor}};">
+    {{uploadStatusMessage}}
+    <!--(your network data is only used locally and never sent to our servers.)-->
+  </div>
+  <div id="list"></div>
+</div>
+
+<div id="blankScreenMessage" style="color: #aaa" ng-show="numMatches > maxMatches">
+  Keep typing to refine your search, currently over {{maxMatches}} tracks match your query...
+</div>
+
+<div id="cellTypeList">
+  <span ng-hide="types.length == 0" style="color: #999; line-height: 150%; font-weight: normal;">{{groupedTypeNames[groupedType]}}</span><br>
+  <span ng-repeat="type in types"><nobr><span ng-click="addSearchTerm(type.name)" style="pointer-events: all; cursor: pointer; color: {{type.color.toString()}}" class="underline-{{hoverNode.type == type.name}}">{{type.name}}</span></nobr><br></span>
+</div>
+
+
+<div style="position: absolute; left: 0px; right: 0px; bottom: 0px;">
+  <div class="rolloverInfo" ng-show="hoverNode" style="opacity: 0.7; color: {{typeMap[hoverNode.type].color}};">
+  {{hoverNode.data.description ? hoverNode.data.description : "ChIP-seq on " + hoverNode.data.cellType }} <span style="font-style: italic; font-weight: normal">- {{hoverNode.data.lab}}</span>
+  </div>
+  <div class="rolloverInfo" ng-show="hoverEdge" style="font-weight: normal; opacity: 0.7; color: #666;">
+  {{hoverEdge.source.name}} -- {{hoverEdge.target.name}} edge weight is {{hoverEdge.coeff | number:3}} <span ng-repeat="label in hoverEdge.labels">({{label}})</span>
+  </div>
+  <!-- <div style="background: linear-gradient(rgba(239, 239, 239, 0.0),rgb(239,239,239); rgba(239, 239, 239, 1)); height: 15px;"></div> -->
+  <div ng-show="selectedTrack && selectedTrackColor" style="background: rgba({{selectedTrackColor.r}},{{selectedTrackColor.g}},{{selectedTrackColor.b}},0.9); padding: 15px; padding-top: 0px; user-select: text">
+    <div style="height: 25px; color: #fff; font-weight: bold; text-align: center; line-height: 25px">{{selectedTrack.data.description}} <span style="font-weight: normal; font-style: italic">- {{selectedTrack.data.lab}}</span></div>
+    <table style="width: 100%"><tr>
+      <td style="width: 180px; vertical-align: top">
+        <b style="color: #fff">Experiment</b><br>
+        <a class="grayLink" href="https://www.encodedcc.org/experiments/{{selectedTrack.data.id}}" target="_new">{{selectedTrack.data.id}}</a><br>
+        <div style="height: 5px;"></div>
+        <b style="color: #fff">Antibody</b><br>
+        <a class="grayLink" href="https://www.encodedcc.org/search/?searchTerm={{selectedTrack.data.antibody}}&type=antibody_approval" target="_new">{{selectedTrack.data.antibody}}</a>
+        
+      </td>
+      <td style="vertical-align: top; color: #eee;">
+        <img src="images/close.png" ng-click="deselectTrack()" style="float: right; opacity: 0.2; margin-right: -4px; margin-top: -14px; cursor: pointer" />
+        <b style="color: #fff">{{selectedTrack.annotationSymbol}}</b> - 
+        {{selectedTrack.annotationSummary}}
+      </td>
+    </tr></table>
+  </div>
+</div>
+
+
+<!-- <div style="position: absolute; left: 0px; top: {{windowHeight()-25}}px; width: 100%; height: 25px; overflow: hidden;" id="ucscWrapper">
+<div style="width: 100%; height: 25px; background-color: #1B71F1; text-align: center;" id="ucscResize" class="ui-resizable-handle ui-resizable-n opacity-{{ucscClosed}}">
+  <span style="line-height: 25px; color: #fff; opacity: 0.9">UCSC Genome Browser (hg19)</span>
+</div>
+<div style="z-index: 2; position: relative; top: 0px; left: 0px; width: 100%; height: 5px; background: url(http://genome.ucsc.edu/images/internal_bg1.jpg) repeat-x fixed left bottom"></div>
+<div style="position: relative; left: 0px; bottom: 0px; width: 100%; height: 25px; overflow: hidden;" class="ucscResizeAlso">
+<iframe border="0" class="ucscResizeAlso" style="overflow-x: hidden; overflow-y: scroll; border: none; position: relative; left: 0px; top: -64px; height: 60px; width: 100%" ng-src="{{ucscUrl}}"></iframe>
+</div>
+</div> -->
+
+
+
+
+<!-- <div style="position: absolute; display: block; bottom: 305px; left: 0px; width: 100%; height: 25px; background-color: rgb(219, 223, 226)"></div>
+<div style="position: absolute; display: block; bottom: 312px; left: 0px; width: 100%; height: 30px; background-color: #1B71F1" ></div>
+
+ -->
+<!--<div id="trackInspector" class="s">
+  <div style="z-index: 100; height: 20px; margin-bottom: -21px; text-align: center; margin-left: -120px; width: 240px; font-size: 12px; color: #999; font-weight: bold; position: relative; top: 0px; left: 50%"><span style="background: linear-gradient(to right, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 1), rgba(255, 255, 255, 1), rgba(255, 255, 255, 1), rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.2)); padding-left: 70px; padding-right: 70px;">Chromosome 10</span></div>
+
+  <div ng-repeat="track in selectedTracks" class="slide-repeated" style="margin-top: 0px;">
+
+    <scalable-series style="width: 100%; height: 80px; margin-bottom: -20px;" view="sharedZoom" hide-x-axis="{{!$first}}" height="{{$first ? 80 : 60}}" track="minmax.{{track.data.id}}.chr10" color="{{typeMap[track.data.cellType].color}}"></scalable-series>
+    
+    <div style="position: relative; z-index: 100; pointer-events: none; margin: auto; margin-bottom: 0px; white-space: nowrap; text-align: center; color: #999; font-size: 12px"><span ng-click="track.showGeneAnnotation = !track.showGeneAnnotation" style="pointer-events: all; cursor: pointer; font-weight: bold; color: {{typeMap[track.data.cellType].color}}" >{{track.data.description}}</span>, <span style="font-size: 11px;">{{track.data.lab}}</span></div>
+
+    <img src="images/closeSmaller.png" ng-click="closeTrack(track)" style="pointer-events: all; float: right; opacity: 0.25; margin-top: -13px; margin-right: 4px; cursor: pointer" />
+
+    <div ng-show="track.showGeneAnnotation">
+      <div style="background: linear-gradient(rgba(239, 239, 239, 0.0), rgba(239, 239, 239, 1)); height: 15px;"></div>
+      <div style="background: rgb(239,239,239); padding: 15px; padding-top: 0px; user-select: text">
+        <table style="width: 100%"><tr>
+          <td style="width: 180px; vertical-align: top">
+            <b style="color: #999">Experiment</b><br>
+            <a class="grayLink" href="https://www.encodedcc.org/experiments/{{track.data.id}}" target="_new">{{track.data.id}}</a><br>
+            <div style="height: 5px;"></div>
+            <b style="color: #999">Antibody</b><br>
+            <a class="grayLink" href="https://www.encodedcc.org/search/?searchTerm={{track.data.antibody}}&type=antibody_approval" target="_new">{{track.data.antibody}}</a>
+            
+          </td>
+          <td style="vertical-align: top;">
+            <img src="images/close.png" ng-click="track.showGeneAnnotation = false" style="float: right; opacity: 0.2; margin-right: -4px; cursor: pointer" />
+            <b style="color: #999">{{track.annotationSymbol}}</b><br>
+            {{track.annotationSummary}}
+          </td>
+        </tr></table>
+      </div>
+    </div>
+  </div>
+</div>-->

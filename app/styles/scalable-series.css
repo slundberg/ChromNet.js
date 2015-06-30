@@ -1,0 +1,43 @@
+.y.axis {
+	cursor: ns-resize;
+	pointer-events: none;
+	user-select: none;
+}
+.y.axis path {
+	display: none;
+}
+.y.axis line {
+	stroke: #000;
+	opacity: 0.1;
+	stroke-dasharray: 5,5;
+}
+.y.axis text {
+	font-size: 11px;
+	fill: #bbb;
+}
+.scalable-series-yaxisBacking {
+	fill: #fff;
+	opacity: 0.8;
+	cursor: ns-resize;
+	user-select: none;
+}
+
+.x.axis path {
+	display: none;
+}
+.x.axis line {
+	stroke: #000;
+	opacity: 0.1;
+}
+.x.axis text {
+	font-size: 12px;
+	fill: #999;
+	pointer: default;
+	pointer-events: none;
+}
+
+.scalable-series-pane {
+	fill: #fff;
+	fill-opacity: 0;
+	cursor: default;
+}

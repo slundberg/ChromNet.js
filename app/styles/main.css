@@ -1,0 +1,253 @@
+body {
+	margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+    font-family: arial, sans-serif;
+}
+
+.underline-true {
+	text-decoration: underline;
+}
+
+.no-select {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.selectable {
+	-webkit-touch-callout: all;
+	-webkit-user-select: all;
+	-khtml-user-select: all;
+	-moz-user-select: all;
+	-ms-user-select: all;
+	user-select: all;
+}
+
+.opacity-true {
+	opacity: 0.3;
+}
+
+#topHeader {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    background: #fafafa;
+    height: 50px;
+    opacity: 0.9;
+}
+
+#linkLogo {
+	position: absolute;
+	font-family: skia, arial;
+	font-size: 26px;
+	left: 18px;
+	top: 16px;
+	color: #1B71F1;
+	font-weight: bold;
+	z-index: 100;
+	cursor: pointer;
+}
+
+#searchBoxWrapper {
+	position: absolute;
+	left: 145px;
+	right: 500px;
+	top: 10px;
+}
+#searchBox {
+	width: 100%;
+	padding: 3px;
+	padding-left: 5px;
+	outline: none;
+	font-size: 16px;
+	border: 1px solid #ddd;
+}
+
+#thresholdValue {
+	position: absolute;
+	top: 5px;
+	right: 141px;
+	z-index: 9;
+	width: 260px;
+	color: #bbb;
+	font-size: 11px;
+	text-align: center;
+}
+#thresholdRange {
+	position: absolute;
+	top: 18px;
+	right: 141px;
+	z-index: 10;
+	width: 260px;
+	color: #fff;
+}
+#rightRangeLabel {
+	position: absolute;
+	top: 17px;
+	z-index: 9;
+	right: 99px;
+	color: #bbb;
+	font-size: 12px;
+}
+#leftRangeLabel {
+	position: absolute;
+	top: 17px;
+	z-index: 9;
+	right: 408px;
+	color: #bbb;
+	font-size: 12px;
+}
+
+#settingsBacking {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	left: 0px;
+	bottom: 0px;
+	z-index: 11;
+	background-color: rgba(255,255,255,0.4);
+}
+#settingsPanel {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	background: #fafafa;
+	opacity: 0.9;
+	padding: 30px;
+	padding-top: 70px;
+	z-index: 11;
+}
+#settingsIcon {
+	position: absolute;
+	top: 13px;
+	z-index: 11;
+	right: 11px;
+	opacity: 0.2;
+}
+
+#downloadIcon {
+	position: absolute;
+	top: 16px;
+	z-index: 11;
+	right: 52px;
+	opacity: 0.2;
+}
+
+#blankScreenMessage {
+	position: absolute;
+	top: 30%;
+	left: 50%;
+	width: 600px;
+	margin-left: -300px;
+	color: #999;
+	font-size: 16px;
+	text-align: center;
+}
+
+#customNetworkDropZone {
+	width: 100%;
+	border: 2px dashed #aaa;
+	padding: 30px;
+}
+
+#cellTypeList {
+	position: absolute;
+	top: 60px;
+	right: 12px;
+	text-align: right;
+	bottom: 0px;
+	width: 300px;
+	pointer-events: none;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.rolloverInfo {
+	/*position: absolute;
+	left: 0px;
+	bottom: 0px;
+*/	font-weight: bold;
+	padding-left: 8px;
+	padding-bottom: 4px;
+}
+
+#trackInspector {
+	position: absolute;
+	left: 0px;
+	right: 0px;
+	bottom: 0px;
+	background-color: rgba(255, 255, 255, 0.9);
+}
+
+
+
+.grayLink {
+	color: #eee;
+	cursor: pointer;
+	text-decoration: none;
+	user-select: text;
+}
+.grayLink:hover {
+	color: #eee;
+	text-decoration: underline;
+}
+
+.addRemoveLink {
+	color: #999;
+	cursor: pointer;
+	text-decoration: none;
+}
+.addRemoveLink:hover {
+	text-decoration: underline;
+}
+
+.aaaaa {
+	opacity: .8;
+}
+
+.trackAnimate {
+  -webkit-transition:all linear 0.5s;
+  -moz-transition:all linear 0.5s;
+  -o-transition:all linear 0.5s;
+  transition:all linear 0.5s;
+  overflow: hidden;
+  max-height: 40px;
+}
+
+.trackAnimate.ng-leave {
+	max-height: 0px;
+}
+
+/*
+.trackAnimate.ng-enter, .trackAnimate.ng-move {
+  -webkit-transition:1.5s linear all;
+  -moz-transition:1.5s linear all;
+  -o-transition:1.5s linear all;
+  transition:1.5s linear all;
+  opacity:0;
+}
+
+
+.trackAnimate.ng-enter.ng-enter-active,
+.trackAnimate.ng-move.ng-move-active {
+  opacity:1;
+}
+
+
+.trackAnimate.ng-leave {
+  -webkit-animation:1.5s linear all;
+  -moz-animation:1.5s linear all;
+  -o-animation:1.5s linear all;
+  animation:1.5s linear all;
+  opacity: 1;
+  display:block!important;
+}
+
+.trackAnimate.ng-leave.ng-leave-active {
+  opacity: 0;
+}*/

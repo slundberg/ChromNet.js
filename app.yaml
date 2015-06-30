@@ -1,0 +1,47 @@
+application: link-uw
+version: 3
+runtime: python27
+api_version: 1
+threadsafe: true
+
+skip_files:
+- \..*
+- GruntFile.js
+- bower.json
+- package.json
+- node_modules
+- test
+- bower_components
+- app
+
+handlers:
+- url: /graph_data
+  static_dir: dist/graph_data
+
+- url: /images
+  static_dir: dist/images
+
+- url: /scripts
+  static_dir: dist/scripts
+
+- url: /styles
+  static_dir: dist/styles
+
+- url: /views
+  static_dir: dist/views
+
+# - url: /bower_components
+#   static_dir: bower_components
+
+- url: /index.html
+  static_files: dist/index.html
+  upload: dist/index.html
+
+- url: /favicon.ico
+  static_files: dist/favicon.ico
+  upload: dist/favicon.ico
+
+- url: /
+  static_files: dist/index.html
+  upload: dist/index.html
+

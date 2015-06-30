@@ -1,0 +1,22 @@
+<p>This is the trackview view.</p>
+
+<!-- <div style="width:100%; height: 100px;"><scalable-series view="sharedZoom" track="minmax.ENCSR000DMS.chr10"></scalable-series></div>
+<div style="width:100%; height: 100px;"><scalable-series view="sharedZoom" track="minmax.ENCSR000DMS.chr10"></scalable-series></div>
+ -->
+
+we need a function called computeZoomLevel() that takes the current view window (x range) and returns a zoom level (in terms of how many powers of 4 we are down sampled) and computeChunkIndexes() a set of chunk indexes that will cover the current window.
+
+we will have a hash of hashes where the outer object is keyed by zoom level and the inner object by chunk index. For each chunk index we will have an array of data points with x and y values.
+
+when we zoom or pan we will call computeZoomLevel() and computeChunkIndexes() 
+
+then we will call drawData() with the given zoom level and chunks. If all the data we already in memory then this would be a simple set of d3 binding calls to attach the right data and remove old data. However since some of the data might not be cached in memory yet this needs to fill the data is lazily. So drawData should fetch each chunk ansyncronsly, and when the results come back it should add them to the data array d3 is bound to.
+
+Because of the async data fetch we will need to mark which entries in the cache should be in d3, that way if the results come back late they will not be added in error.
+
+We also need a flushCache() function that will go through a lru list of chunks and delete them until we have a small enough list in the cache.
+
+The server side of this whole process is very simple once the chunks are generated at each zoom it just needs to serve the data.
+<input type="checkbox" ng-model="testValue">
+
+<div ng-show="testValue" class="trackAnimate">here is some content</div>
