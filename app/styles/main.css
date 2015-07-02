@@ -128,14 +128,26 @@ body {
 	z-index: 11;
 	right: 11px;
 	opacity: 0.2;
+	cursor: pointer;
 }
 
-#downloadIcon {
+#helpIcon {
 	position: absolute;
-	top: 16px;
+	top: 15px;
 	z-index: 11;
 	right: 52px;
 	opacity: 0.2;
+	cursor: pointer;
+}
+
+#helpPanel {
+	position: absolute;
+	top: 10%;
+	left: 50%;
+	height: 80%;
+	width: 700px;
+	margin-left: -350px;
+	z-index: 11;
 }
 
 #blankScreenMessage {
