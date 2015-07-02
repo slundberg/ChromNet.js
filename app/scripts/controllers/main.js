@@ -637,7 +637,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
     $scope.buildColorSet = function(numColors) {
     	
         var colors = [d3.rgb(27, 113, 241), d3.rgb(83, 191, 15), d3.rgb(219, 139, 0), d3.rgb(204, 24, 24), d3.rgb(161, 117, 191)];
-        if (numColors === 1) return [colors[0]];
+        if (numColors === 1) return [colors[0].toString()];
 
         // Create a polylinear color scale that interpolates between all the given colors when we run out
         var numUniqueColors = Math.min(numColors, colors.length);

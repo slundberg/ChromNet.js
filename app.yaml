@@ -21,6 +21,9 @@ handlers:
 - url: /images
   static_dir: dist/images
 
+- url: /fonts
+  static_dir: dist/fonts
+
 - url: /scripts
   static_dir: dist/scripts
 

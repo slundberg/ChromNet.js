@@ -38,14 +38,14 @@
       <center><h3 style="color: #666">Interface documentation</h3></center>
       <br>
       <h4 style="font-weight: bold">Search</h4>
-      <p>Every dataset in ChromNet has associated metadata that is used to return search results in the interface. To search all datasets simply start typing in the search field. Datasets from ENCODE include a title, description, lab name, cell type, accession id, etc. while custom datasets include metadata provided during network generation.</p>
+      <p>Every dataset in ChromNet has associated metadata that is used to return search results in the interface. To search all datasets simply start typing in the search field. Datasets from <a href="http://encodeproject.org" target="_top">ENCODE</a> include a title, description, lab name, cell type, accession id, etc. while custom datasets include metadata provided during network generation.</p>
 
-      <p>Matching search results appear as standard sized nodes in the network. When the "include nearby nodes" option is enabled (it is by default) then datasets that do not match the search but are connected to a search match through an edge are shown as smaller nodes in the network. These "nearby" nodes appear and disappear when you adjust the edge threshold slider.</p>
+      <p>Matching search results appear as standard sized nodes in the network. When the "include nearby nodes" option is enabled in settings (it is by default) then datasets that do not match the search but are connected to a search match through an edge are shown as smaller nodes in the network. These "nearby" nodes appear and disappear when you adjust the edge threshold slider.</p>
       <br>
       <h4 style="font-weight: bold">Edge threshold</h4>
-      <p>Every edge in the ChromNet group graphical model has an associated score. High magnitude scores represent stronger statistical dependencies, and are also more likely to represent biologically meaningful interactions. By sliding the edge threshold control in the top right of the interface which network edges are shown in the network can be controlled. Dragging to far right shows only the strongest edges, while dragging to the far left shows even the most weak speculative edges. The lower bound on the edges threshold was set at 0.03 because among edges below this threshold there is no enrichment for known protein-protein interactions.</p>
+      <p>Every edge in the ChromNet group graphical model has an associated score. High magnitude scores represent stronger statistical dependencies, and are also more likely to represent biologically meaningful interactions. Sliding the edge threshold control in the top right of the interface controls which network edges are shown in the network. Dragging to the far right shows only the strongest edges, while dragging to the far left shows even the most weak speculative edges. The lower bound on the edge threshold was set at 0.03 because below this threshold there was no enrichment for known protein-protein interactions among edges inferred using ENCODE data tracks.</p>
 
-      <p>The exact score of an edge can be determined by hovering the mouse over the edge. This causes a short description, included the edges score, to be displayed in the lower left of the screen.</p>
+      <p>The exact score of an edge can be determined by hovering the mouse over the edge. This causes a short description, including the edge's score, to be displayed in the lower left of the screen.</p>
       <br>
       <h4 style="font-weight: bold">Color clusters</h4>
       <p>To help organize the network during visualization datasets are classified into a set of colored clusters, where only edges within a cluster are shown. To change how this clustering is performed, open the settings gear at the top right of the interface and choose a different clustering criteria.</p>
@@ -53,7 +53,9 @@
       <p>The color cluster groups currently shown are listed on the right of the interface. Hovering over a node underlines the corresponding color cluster name, and clicking on any of the color cluster names adds it to the search term, restricting the results to only that color cluster.</p>
       <br>
       <h4 style="font-weight: bold">Dataset inspection</h4>
-      <p>Clicking on a dataset in the interface selects that node and opens a detail panel at the bottom of the screen. This panel provides details and links to the original data. When a node is selected all other nodes with the same label (typically the target protein name) are also shown, this allows easy inspection of whether a certain protein target is not displayed because it is not "nearby" (connected by an edge to a search match) or because no such experiment exists. To de-select a dataset simply click anywhere in the background.</p>
+      <p>Clicking on a dataset in the interface selects that node and opens a detail panel at the bottom of the screen. This panel displays metadata and links to the original data source. When a node is selected all other nodes with the same label (typically the target protein name) are also shown in currently visible color clusters. This allows easy inspection of whether a certain protein target is not displayed because it is not "nearby" (connected by an edge to a search match) or because no such experiment exists. To de-select a dataset simply click anywhere in the background.</p>
+
+      <p>Note that nodes in the interface can be dragged and zooming is supported through the mouse wheel.</p>
       <br>
       <h4 style="font-weight: bold">Graph download</h4>
       <p>To download a spreadsheet representing the currently displayed sub-network, open the settings panel at the top right of the screen and click "Download current graph view." This will save a CSV file to your local computer with the datasets groups and edges that match your current search.</p>
@@ -65,7 +67,6 @@
 </div>
 <img id="settingsIcon" src="/images/cog_small.png" ng-click="settingsOpen = !settingsOpen" />
 <img id="helpIcon" src="/images/helpIcon.png" ng-click="helpOpen = !helpOpen" />
-<!-- <img id="downloadIcon" src="/images/glyphicons-365-cloud-download.png" ng-click="downloadGraph()" /> -->
 
 <div id="searchBoxWrapper"><div ng-show="searchString != '' && numMatches <= maxMatches" style="position: absolute; margin-left: -50px; right: 0px; overflow: visible; padding: 4px; text-align: right; padding-right: 10px; padding-top: 5px; color: #aaa; font-size: 14px;">{{numMatches}} matches</div><input type="text" id="searchBox" style="" ng-model="searchString" autofocus placeholder="type to search..."/></div>
 <img id="linkLogo" src="/images/chromNetLogo.png" ng-click="searchString = ''" />
@@ -78,9 +79,6 @@
   <div style="font-size: 13px; text-align: justify;">ChromNet is designed to identify direct interactions between ChIP-seq datasets, which are correlations unique to a pair of variables that cannot be explained by any other dataset in the database. ChromNet uses a group graphical model representation that integrates both a hierarchical clustering of the data represented by color intensity, and direct interactions between groups represented by edges. For more details and raw data see paper to come. Source code for both the <a href="https://github.com/slundberg/ChromNet.js" target="_top">client interface</a> and to <a href="https://github.com/slundberg/ChromNet.jl" target="_top">generate custom ChromNet networks</a> is available on GitHub.</div><br>
   <br>
   <br>
-<!--   <div class="well" style="color: #000; padding: 15px;">
-    ChromNet scripts
-  </div> -->
 
   <div id="customNetworkDropZone" style="color: {{uploadColor}}; border-color: {{uploadColor}};">
     {{uploadStatusMessage}}
