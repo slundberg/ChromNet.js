@@ -113,7 +113,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
             //scope.nodes = scope.nodesRef.splice(0);
             scope.singleNodes = _.filter(scope.nodes, function(d) { return !d.group;});
             scope.groupNodes = _.filter(scope.nodes, function(d) { return d.group;}).reverse();
-            //console.log(scope.groupNodes);
+            console.log("scope.groupNodes", scope.groupNodes);
 
             function nearestNodePos(node) {
                 var d = node;
@@ -125,7 +125,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 }
                 return [centerx, centery];
             }
-            
+
             for (var i = 0; i < scope.nodes.length; ++i) {
                 var d = scope.nodes[i];
 
@@ -147,7 +147,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
 
             for (var i = scope.nodes.length-1; i >= 0; --i) {
                 var d = scope.nodes[i];
-                
+
                 // place new nodes near others in the same cluster
                 if (d.x === undefined) {
                     var p = nearestNodePos(d);
@@ -199,7 +199,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                     }
                 });
             groupHulls.exit().remove();
-            
+
             window.groupHulls = groupHulls;
 
 
@@ -273,7 +273,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
             linkLines.attr('opacity', function(d) { if (d.lighten) return 0.05; else return 0.4; });
             linkLines.attr('stroke-dasharray', function(d) { return d.coeff < 0 ? '5,5' : 'none' ; });
             linkLines.attr("marker-mid", function(d) { return d.marked ? "url(#linkMark)" : "none"; });
-            
+
 
             linkClips = linkClips.data(scope.links, function(d) { return d.uuid; });
             var linkClipsG = linkClips.enter().append('mask')
@@ -311,7 +311,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 d.sublabelDrop = d.selected ? 11 : d.highlight ? 10 : 8;
                 d.labelShift = Math.max(0, d.halfSublabelWidth - d.halfLabelWidth);
             });
-            
+
             nodeBoxes
             	.attr('width', function(d) { return d.halfTextWidth*2 + (d.selected ? 16 : d.highlight ? 12 : 8); })
                 .style('fill', function(d) {
@@ -409,7 +409,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 return false;
             }
 
-            
+
 
             // http://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
             // returns true iff the line from (a,b)->(c,d) intersects with (p,q)->(r,s)
@@ -487,7 +487,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 //     d.y += -(d.y-d.parent.y);
                 // }
 
-                
+
 
                 // // work from the top down incorperating all the collisions and forces
                 // for (var i = scope.nodes.length-1; i >= 0; --i) {
@@ -505,13 +505,13 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 //         d.opx = d.parent.opx;
                 //         d.opy = d.parent.opy;
                 //     }
-                    
+
                 //     //if (i === scope.nodes.length-2) console.log("d.ox", i, d.ox, d.parent.x, d.x, d.px, d.lastx)
                 //     //else force.stop()
 
-                    
 
-                    
+
+
                 //     if (d.parent && d.level === 0) {
 
                 //         // // gravity towards the center of the screen. Proportional to the window aspect ratio.
@@ -529,7 +529,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
 
                 //         // // Detect collisions
                 //         // var delta = [0.0,0.0];
-                //         // for (var j = 0; j < d.intTests.length; ++j) { 
+                //         // for (var j = 0; j < d.intTests.length; ++j) {
                 //         //     if (d.intTests[j].hullPoints && d.hullPoints) {
                 //         //         for (var k = 0; k < d.hullPoints.length; ++k) {
                 //         //             var dist = pointInConvexPolygon(d.hullPoints[k], d.intTests[j].hullPoints, delta, (d.level+d.intTests[j].level)*7);
@@ -596,7 +596,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 //         // Detect collisions
                 //         if (d.intTests) { // in case we run before intTests is updated
                 //             var delta = [0.0,0.0];
-                //             for (var j = 0; j < d.intTests.length; ++j) { 
+                //             for (var j = 0; j < d.intTests.length; ++j) {
                 //                 var d2 = d.intTests[j];
                 //                 if (d2.hullPoints && d.hullPoints) {
                 //                     for (var k = 0; k < d.hullPoints.length; ++k) {
@@ -640,14 +640,14 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 //             d.hullPoints = d3.geom.hull(d.child1.hullPoints.concat(d.child2.hullPoints));
                 //             d.x = d.px = (d.child1.groupSize*d.child1.x + d.child2.groupSize*d.child2.x)/d.groupSize;
                 //             d.y = d.py = (d.child1.groupSize*d.child1.y + d.child2.groupSize*d.child2.y)/d.groupSize;
-                        
+
                 //         // +1.0 keeps the nodes from being perfectly on top of one another
                 //         // ...something the force layout does not like even with 0 charge on the group nodes
                 //         } else if (d.child1.visible && d.child1.hullPoints) {
                 //             d.x = d.px = d.child1.x+1.0;
                 //             d.y = d.py = d.child1.y+1.0;
                 //             d.hullPoints = d.child1.hullPoints;
-                        
+
                 //         } else if (d.child2.hullPoints) {
                 //             d.x = d.px = d.child2.x+1.0;
                 //             d.y = d.py = d.child2.y+1.0;
@@ -663,7 +663,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 // change underneath the ticker from AngularJS. In contrast nodeBoxes doesn't change until everything
                 // is set and ready to tick
                 nodeBoxes.each(function(d) {
-                    
+
                     if (!d.fixed) {
 
                         // gravity towards the center of the screen. Proportional to the window aspect ratio.
@@ -705,7 +705,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                     // Detect collisions // Math.abs(d.x) < 5000 && Math.abs(d.y) < 5000
                     if (d.intTests && !d.fixed) { // in case we run before intTests is updated
                         var delta = [0.0, 0.0];
-                        for (var j = 0; j < d.intTests.length; ++j) { 
+                        for (var j = 0; j < d.intTests.length; ++j) {
                             var d2 = d.intTests[j];
                             if (d2.hullPoints) { // && d.hullPoints
                                 for (var k = 0; k < d.hullPoints.length; ++k) {
@@ -793,19 +793,19 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 // }
                 // for (var i = scope.groupNodes.length-1; i >= 0; --i) {
                 //     var d = scope.groupNodes[i];
-                    
+
                     if (d.child1 && d.child2 && d.child1.hullPoints && d.child2.hullPoints) {
                         d.hullPoints = d3.geom.hull(d.child1.hullPoints.concat(d.child2.hullPoints));
                         d.x = d.px = (d.child1.groupSize*d.child1.x + d.child2.groupSize*d.child2.x)/d.groupSize;
                         d.y = d.py = (d.child1.groupSize*d.child1.y + d.child2.groupSize*d.child2.y)/d.groupSize;
-                    
+
                      // +1.0 keeps the nodes from being perfectly on top of one another
                      // ...something the force layout does not like even with 0 charge on the group nodes
                     } else if (d.child1 && d.child1.hullPoints) {
                         d.x = d.px = d.child1.x+1.0;
                         d.y = d.py = d.child1.y+1.0;
                         d.hullPoints = d.child1.hullPoints;
-                    
+
                     } else if (d.child2.hullPoints) {
                         d.x = d.px = d.child2.x+1.0;
                         d.y = d.py = d.child2.y+1.0;
@@ -826,14 +826,14 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 //         d.hullPoints = d3.geom.hull(d.child1.hullPoints.concat(d.child2.hullPoints));
                 //         d.x = d.px = (d.child1.groupSize*d.child1.x + d.child2.groupSize*d.child2.x)/d.groupSize;
                 //         d.y = d.py = (d.child1.groupSize*d.child1.y + d.child2.groupSize*d.child2.y)/d.groupSize;
-                    
+
                 //     // +1.0 keeps the nodes from being perfectly on top of one another
                 //     // ...something the force layout does not like even with 0 charge on the group nodes
                 //     } else if (d.child1.visible) {
                 //         d.x = d.px = d.child1.x+1.0;
                 //         d.y = d.py = d.child1.y+1.0;
                 //         d.hullPoints = d.child1.hullPoints;
-                    
+
                 //     } else {
                 //         d.x = d.px = d.child2.x+1.0;
                 //         d.y = d.py = d.child2.y+1.0;
@@ -874,11 +874,11 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 //         // TODO: when this gets slower we could use d3's quadtree to speed up what we test
                 //         // TODO: deal with intersections between groups
                 //         var delta = [0.0,0.0];
-                //         for (var i = 0; i < d.intTests.length; ++i) { 
+                //         for (var i = 0; i < d.intTests.length; ++i) {
                 //             if (d.intTests[i].hullPoints) {
                 //                 for (var j = 0; j < d.hullPoints.length; ++j) {
                 //                     var dist = pointInConvexPolygon(d.hullPoints[j], d.intTests[i].hullPoints, delta, (d.level+d.intTests[i].level)*7);
-                //                     // 
+                //                     //
                 //                     if (dist > 0) {
                 //                         //console.log(dist)
                 //                         // if (dist > 10) {
@@ -889,8 +889,8 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
 
                 //                         //     console.log("intersect", dist, d.hullPoints[j], s);
                 //                         // }
-                                        
-                                        
+
+
 
                 //                         // Update our hull points as well as our center (and kill all momentum)
                 //                         var dx = delta[0]*dist;
@@ -912,16 +912,16 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 //     })
                 //     .attr('y', function(d) { return d.y-(d.selected ? 18 : d.highlight ? 15 : 11); });
 
-                
+
                 // groupHulls.attr("d", function(d) {
                 //     console.log("Dd", d, d.child1.hullPoints, d.child2.hullPoints, d.child2)
                 //     if (d.child1.visible && d.child2.visible) {
-                        
+
                 //         d.hullPoints = d3.geom.hull(d.child1.hullPoints.concat(d.child2.hullPoints));
                 //         d.groupSize = d.child1.groupSize + d.child2.groupSize;
                 //         d.x = d.px = (d.child1.groupSize*d.child1.x + d.child2.groupSize*d.child2.x)/d.groupSize;
                 //         d.y = d.py = (d.child1.groupSize*d.child1.y + d.child2.groupSize*d.child2.y)/d.groupSize;
-                    
+
                 //      // +1.0 keeps the nodes from being perfectly on top of one another
                 //      // ...something the force layout does not like even with 0 charge on the group nodes
                 //     } else if (d.child1.visible) {
@@ -929,7 +929,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
                 //         d.x = d.px = d.child1.x+1.0;
                 //         d.y = d.py = d.child1.y+1.0;
                 //         d.hullPoints = d.child1.hullPoints;
-                    
+
                 //     } else {
                 //         d.groupSize = d.child2.groupSize;
                 //         d.x = d.px = d.child2.x+1.0;
@@ -990,10 +990,10 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
 
                 firstTick = false;
             });
-            
+
             // force.on('start', function() {
             //     console.log("START")
-                
+
             //     //force.alpha(0);
             // });
 

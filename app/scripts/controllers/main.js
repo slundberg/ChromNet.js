@@ -7,22 +7,27 @@
  * # MainCtrl
  * Controller of the linkClientApp
  */
-angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', function ($scope, $http) {
-    $scope.threshold = 1; // currently a negative log base 10 p-value
-    
+angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
     $scope.sourceFile = 'http://storage.googleapis.com/link-uw-human/network_rank99_0.7G_3_25_15_groupgm.json';
     //$scope.sourceFile = 'http://storage.googleapis.com/link-uw-human/network_0.7G_2_10_15_groupgm.json';
     //$scope.sourceFile = '/graph_data/network.json';
     $scope.trackId = "ENCSR000DMS";
     $scope.sharedZoom = {};
-    $scope.maxMatches = 300; // limit to save the browser from plotting too many matches and getting slow
+    $scope.maxMatches = 200; // limit to save the browser from plotting too many matches and getting slow
     $scope.selectedTrack = undefined;
     $scope.selectedTrackUUID = undefined;
     $scope.selectedTrackColor = undefined;
     //$scope.showCrossLinks = $.cookie('showCrossLinks') === undefined ? true : $.cookie('showCrossLinks') === "true";
     $scope.includeNearby = $.cookie('includeNearby') === undefined ? true : $.cookie('includeNearby') === "true";
     //console.log("test", $scope.showCrossLinks, $scope.includeNearby);
-    $scope.searchString = $.cookie('searchString') === undefined ? "" : $.cookie('searchString');
+    $scope.searchString = $location.search()["search"];
+    if ($scope.searchString === undefined) {
+        $scope.searchString = $.cookie('searchString') === undefined ? "" : $.cookie('searchString');
+    }
+    $scope.threshold = $location.search()["threshold"];
+    if ($scope.threshold === undefined) {
+        $scope.threshold = 0.5;
+    }
     $scope.allTypes = {}; // a way to map types to unique integers
     $scope.groupedType = "cellTypeAndTreatments";
     $scope.groupedTypeNames = {
@@ -38,6 +43,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
 
     // for debugging access
     window.mainScope = $scope;
+    window.$location = $location;
 
     $scope.markBioGRIDEdges = true;
 
@@ -141,6 +147,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
         evt.preventDefault();
         evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
     }
+
     // Setup the dnd listeners.
     var dropZone = document.getElementById('customNetworkDropZone');
     dropZone.addEventListener('dragenter', function(evt) {
@@ -222,7 +229,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
     function loadMetaData(track, results) {
         if (results.hits.length) $http.get("http://mygene.info/v2/gene/"+results.hits[0].entrezgene).success(function(data) {
             track.annotationSymbol = data.symbol;
-            track.annotationSummary = data.summary;
+            track.annotationSummary = data.summary + " (from mygene.info)";
         });
     }
 
@@ -236,13 +243,13 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
     $scope.newGraph = function(graph) {
         $scope.graph = graph;
         window.graph = graph;
-        
+
 
         // Set up the ranges for the threshold
         var sortedPvals = _.sortBy(_.pluck($scope.graph.links, 'log10pval'));
         $scope.maxRangeBound = 2; //-sortedPvals[Math.min(100, Math.floor(sortedPvals.length/5))];
         $scope.minRangeBound = -sortedPvals[sortedPvals.length-1];
-        $scope.threshold = 0.5; //-sortedPvals[Math.floor(sortedPvals.length/20)];
+        //$scope.threshold = 0.5; //-sortedPvals[Math.floor(sortedPvals.length/20)];
 
         // convert the link target and source indexes
         console.log($scope.graph.links.length);
@@ -284,7 +291,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
                     d.parent.nodeCount += d.nodeCount;
                 }
             }
-            
+
             if (d.child1) d.group = true;
             else $scope.leafCount += 1;
 
@@ -293,7 +300,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
                 $scope.allTypes[d.data[$scope.groupedType]] = Object.keys($scope.allTypes).length;
             }
         });
-        
+
         $scope.filterGraph();
     };
 
@@ -370,7 +377,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
             $scope.presentedNodes = [];
             $scope.presentedLinks = [];
             $scope.types = [];
-            _.defer(function() { $scope.$broadcast('graphChange'); }); 
+            _.defer(function() { $scope.$broadcast('graphChange'); });
             return;
         }
 
@@ -384,16 +391,18 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
         }
 
         // mark which links pass our thresholds (or fail a filter)
+        var tmp = 0;
         _.each(g.links, function(d) {
             d.passedThreshold = d.score > $scope.threshold && d.source.groupScore > 0.7 && d.target.groupScore > 0.7;
-
+            if (d.passedThreshold) ++tmp;
             if ($scope.markBioGRIDEdges && d.labels.indexOf("BioGRID") > -1) d.marked = true;
             else d.marked = undefined;
         });
+        console.log("num edges:", tmp);
 
         // Mark all nodes nearby links that pass our thresholds
         function markNearby(graph) {
-            
+
             // mark all node with the same name as the selected track "nearby"
             if ($scope.selectedTrack) for (i = 0; i < graph.nodes.length; ++i) {
                 if ($scope.selectedTrack.name === graph.nodes[i].name) {
@@ -426,7 +435,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
         for (var i = 0; i < graph.nodes.length; ++i) {
             graph.nodes[i].nearby = undefined;
         }
-        
+
         // mark nearby nodes and children of nearby nodes
         if ($scope.includeNearby) markNearby(g);
 
@@ -554,7 +563,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
                 }
                 return true;
             });
-            
+
             return newGraph;
         }
 
@@ -610,7 +619,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
             var typeGraph = pruneWeakParents(filterGraphByType(cloneGraph(fg), type));
             filterRedundantEdges(typeGraph);
             computeLevels(typeGraph);
-            
+
             Array.prototype.push.apply($scope.presentedNodes, typeGraph.nodes);
             Array.prototype.push.apply($scope.presentedLinks, typeGraph.links);
         });
@@ -622,20 +631,37 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', funct
             $scope.presentedLinks = [];
         }
 
+        // count how many single (non-group) nodes there are
+        $scope.numHighlightMatches = 0;
+        $scope.numNearbyMatches = 0;
+        for (var i = 0; i < $scope.presentedNodes.length; ++i) {
+            if (!$scope.presentedNodes[i].group) {
+                if ($scope.presentedNodes[i].highlight) ++$scope.numHighlightMatches;
+                else if ($scope.presentedNodes[i].nearby) ++$scope.numNearbyMatches;
+            }
+        }
+
+        // See if should suggest that the user lower the edge threshold
+        $scope.lowEdgeCount = $scope.presentedLinks.length < Math.ceil(($scope.numHighlightMatches+$scope.numNearbyMatches)/6);
+
         // Keep the selected track selected after rebuilding the graph (just updating the pointer caused loopy reference problems)
         if ($scope.selectedTrack) for (i = 0; i < $scope.presentedNodes.length; ++i) {
             if ($scope.presentedNodes[i].uuid === $scope.selectedTrackUUID) {
                 $scope.presentedNodes[i].selected = true;
             }
         }
-        
+
+        // save our current search and threshold settings in the url
+        $location.search('search', $scope.searchString);
+        $location.search('threshold', $scope.threshold);
+
         // defer so the digest can complete and the directive will be in sync with the updated scope variables
-        _.defer(function() { $scope.$broadcast('graphChange'); }); 
+        _.defer(function() { $scope.$broadcast('graphChange'); });
     };
 
     // This creates a unique and hopefully pleasent set of ordered colors
     $scope.buildColorSet = function(numColors) {
-    	
+
         var colors = [d3.rgb(27, 113, 241), d3.rgb(83, 191, 15), d3.rgb(219, 139, 0), d3.rgb(204, 24, 24), d3.rgb(161, 117, 191)];
         if (numColors === 1) return [colors[0].toString()];
 
