@@ -2,7 +2,7 @@
 
 <!-- https://jquerytools.github.io/documentation/rangeinput/index.html might help us improve this (so it looks the same on all platforms)-->
 <div id="thresholdValue">{{threshold | number:2}}</div>
-<input id="thresholdRange" ng-model="threshold" type="range" step="0.01" min="0.3" max="{{maxRangeBound}}">
+<input id="thresholdRange" ng-model="threshold" ng-disabled="!loadedGraph" type="range" step="0.01" min="0.3" max="{{maxRangeBound}}">
 <div id="sliderMessageBox" align="right" ng-show="lowEdgeCount">
   <div class="arrow-up" style="margin-right: 10px"></div>
   <div id="sliderMessageText">Tip: lower the threshold to see more edges...</div>
@@ -74,13 +74,13 @@
 <img id="settingsIcon" src="/image_files/cog_small.png" ng-click="settingsOpen = !settingsOpen" />
 <img id="helpIcon" src="/image_files/helpIcon.png" ng-click="helpOpen = !helpOpen" />
 
-<div id="searchBoxWrapper"><div ng-show="searchString != '' && numMatches <= maxMatches" style="position: absolute; margin-left: -50px; right: 0px; overflow: visible; padding: 4px; text-align: right; padding-right: 10px; padding-top: 5px; color: #aaa; font-size: 14px;">{{numHighlightMatches}} matches, {{numNearbyMatches}} nearby</div><input type="text" id="searchBox" style="" ng-model="searchString" autofocus placeholder="type to search..."/></div>
+<div id="searchBoxWrapper"><div ng-show="searchString != '' && numMatches <= maxMatches" style="position: absolute; margin-left: -50px; right: 0px; overflow: visible; padding: 4px; text-align: right; padding-right: 10px; padding-top: 5px; color: #aaa; font-size: 14px;">{{numHighlightMatches}} matches, {{numNearbyMatches}} nearby</div><input type="text" ng-disabled="!loadedGraph" id="searchBox" style="" ng-model="searchString" autofocus placeholder="type to search..."/></div>
 <img id="linkLogo" src="/image_files/chromNetLogo.png" ng-click="searchString = ''" />
 
 <feature-network nodes="presentedNodes" links="presentedLinks" type-map="typeMap" selected-node="selectedTrack" hover-node="hoverNode" hover-edge="hoverEdge"></feature-network>
 
 <div id="blankScreenMessage" ng-hide="presentedNodes.length || searchString">
-  <span style="color: #333">Type to search {{leafCount}} {{customData ? 'data' : 'ENCODE ChIP-seq'}} tracks, or try an example query such as <a href ng-click="searchString = 'EZH2'">EZH2</a>, <a href ng-click="searchString = 'H3K4me3 K562'">H3K4me3 K562</a>, or <a href ng-click="searchString = 'MYC NB4'">MYC NB4</a>.</span><br>
+  <span style="color: #333" ng-show="loadedGraph">Type to search {{leafCount}} {{customData ? 'data' : 'ENCODE ChIP-seq'}} tracks, or try an example query such as <a href ng-click="searchString = 'EZH2'">EZH2</a>, <a href ng-click="searchString = 'H3K4me3 K562'">H3K4me3 K562</a>, or <a href ng-click="searchString = 'MYC NB4'">MYC NB4</a>.</span><br>
   <br>
   <div style="font-size: 13px; text-align: justify;">ChromNet is designed to identify direct interactions between ChIP-seq datasets, which are correlations unique to a pair of variables that cannot be explained by any other dataset in the database. ChromNet uses a group graphical model representation that integrates both a hierarchical clustering of the data represented by color intensity, and direct interactions between groups represented by edges. For more details and raw data see the <a href="https://sites.google.com/a/cs.washington.edu/chromnet/" target="_top">paper to come</a> and the online <a href=""  ng-click="helpOpen = !helpOpen">documentation</a>. Source code for both the <a href="https://github.com/slundberg/ChromNet.js" target="_top">client interface</a> and to <a href="https://github.com/slundberg/ChromNet.jl" target="_top">generate custom ChromNet networks</a> is available on GitHub.</div><br>
   <br>

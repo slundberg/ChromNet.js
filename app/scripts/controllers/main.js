@@ -13,6 +13,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
     $scope.sourceFile = '/data/network_raw_0.8G_0.3T_1_14_16.json';
     $scope.trackId = "ENCSR000DMS";
     $scope.sharedZoom = {};
+    $scope.loadedGraph = false;
     $scope.maxMatches = 200; // limit to save the browser from plotting too many matches and getting slow
     $scope.selectedTrack = undefined;
     $scope.selectedTrackUUID = undefined;
@@ -26,7 +27,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
     }
     $scope.threshold = $location.search()["threshold"];
     if ($scope.threshold === undefined) {
-        $scope.threshold = 0.5;
+        $scope.threshold = 1.5;
     }
     $scope.groupScoreThreshold = $location.search()["groupScoreThreshold"];
     if ($scope.groupScoreThreshold === undefined) {
@@ -111,8 +112,11 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
         updateSelectedTrack();
     });
     $scope.$watch('sourceFile', function() {
+        NProgress.start();
         $http.get($scope.sourceFile).success(function(graph) {
              $scope.newGraph(graph);
+             NProgress.done();
+             $scope.loadedGraph = true;
         });
     });
     $scope.$watch('selectedTrack', updateSelectedTrack);
@@ -125,7 +129,8 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
             $scope.uploadErrorMessage = "Please only upload a single JSON file!";
             return;
         }
-
+        $scope.loadedGraph = false;
+        NProgress.start();
         $scope.uploadStatusMessage = "Loading custom network...";
         //$scope.uploadColor = "#5bc0de";
 
@@ -137,6 +142,8 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
                 $scope.uploadColor = "#5cb85c";
                 $scope.uploadStatusMessage = "Custom network loaded."
                 $scope.customData = true;
+                NProgress.done();
+                $scope.loadedGraph = true;
                 _.delay(function() {
                     $scope.uploadStatusMessage = $scope.defaultUploadStatusMessage;
                     $scope.uploadColor = "";

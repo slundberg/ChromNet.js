@@ -5,6 +5,44 @@ body {
     font-family: arial, sans-serif;
 }
 
+#nprogress .bar {
+  background: #1B71F1;
+}
+
+#nprogress .spinner {
+  top: 100px;
+  left: 50%;
+  margin-left: -25px;
+}
+
+#nprogress .peg {
+  display: block;
+  position: absolute;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  box-shadow: 0 0 10px #1B71F1, 0 0 5px #1B71F1;
+  opacity: 1.0;
+
+  -webkit-transform: rotate(3deg) translate(0px, -4px);
+      -ms-transform: rotate(3deg) translate(0px, -4px);
+          transform: rotate(3deg) translate(0px, -4px);
+}
+
+#nprogress .spinner-icon {
+  width: 18px;
+  height: 18px;
+  box-sizing: border-box;
+
+  border: solid 2px transparent;
+  border-top-color: #999;
+  border-left-color: #999;
+  border-radius: 50%;
+
+  -webkit-animation: nprogress-spinner 800ms linear infinite;
+          animation: nprogress-spinner 800ms linear infinite;
+}
+
 .underline-true {
 	text-decoration: underline;
 }
