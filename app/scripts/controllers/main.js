@@ -8,9 +8,9 @@
  * Controller of the linkClientApp
  */
 angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$location', function ($scope, $http, $location) {
-    $scope.sourceFile = 'http://storage.googleapis.com/link-uw-human/network_rank99_0.7G_3_25_15_groupgm.json';
+    //$scope.sourceFile = 'http://storage.googleapis.com/link-uw-human/network_rank99_0.7G_3_25_15_groupgm.json';
     //$scope.sourceFile = 'http://storage.googleapis.com/link-uw-human/network_0.7G_2_10_15_groupgm.json';
-    //$scope.sourceFile = '/graph_data/network.json';
+    $scope.sourceFile = '/data/network_raw_0.8G_0.3T_1_14_16.json';
     $scope.trackId = "ENCSR000DMS";
     $scope.sharedZoom = {};
     $scope.maxMatches = 200; // limit to save the browser from plotting too many matches and getting slow
@@ -28,6 +28,11 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
     if ($scope.threshold === undefined) {
         $scope.threshold = 0.5;
     }
+    $scope.groupScoreThreshold = $location.search()["groupScoreThreshold"];
+    if ($scope.groupScoreThreshold === undefined) {
+        $scope.groupScoreThreshold = 0.9;
+    }
+
     $scope.allTypes = {}; // a way to map types to unique integers
     $scope.groupedType = "cellTypeAndTreatments";
     $scope.groupedTypeNames = {
@@ -79,6 +84,9 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
     $scope.$watch('threshold', function() {
         if ($scope.graph) $scope.filterGraph();
     });
+    $scope.$watch('groupScoreThreshold', function() {
+        if ($scope.graph) $scope.filterGraph();
+    });
     // $scope.$watch('showCrossLinks', function() {
     //     $.cookie('showCrossLinks', $scope.showCrossLinks, { expires: 90 });
     //     if ($scope.graph) $scope.filterGraph();
@@ -89,7 +97,6 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
     });
     $scope.$watch('includeNearby', function() {
         $.cookie('includeNearby', $scope.includeNearby, { expires: 90 });
-        console.log("includeNearby", $scope.includeNearby);
         if ($scope.graph) $scope.filterGraph();
         updateSelectedTrack();
     });
@@ -247,21 +254,18 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
 
         // Set up the ranges for the threshold
         var sortedPvals = _.sortBy(_.pluck($scope.graph.links, 'log10pval'));
-        $scope.maxRangeBound = 2; //-sortedPvals[Math.min(100, Math.floor(sortedPvals.length/5))];
+        $scope.maxRangeBound = 3; //-sortedPvals[Math.min(100, Math.floor(sortedPvals.length/5))];
         $scope.minRangeBound = -sortedPvals[sortedPvals.length-1];
         //$scope.threshold = 0.5; //-sortedPvals[Math.floor(sortedPvals.length/20)];
 
         // convert the link target and source indexes
         console.log($scope.graph.links.length);
-        $scope.graph.links =_.filter($scope.graph.links, function(d) {
+        _.each($scope.graph.links, function(d) {
             d.source = $scope.graph.nodes[d.source];
             d.target = $scope.graph.nodes[d.target];
             d.score = Math.abs(d.coeff);
-            d.coeff = -d.coeff;
-            return d.source.groupScore > 0.7 && d.target.groupScore > 0.7;
         });
         console.log($scope.graph.links.length);
-        console.log('graph', graph);
 
         // mark all nodes that are just controls
         // convert parent indexes to object references
@@ -393,7 +397,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
         // mark which links pass our thresholds (or fail a filter)
         var tmp = 0;
         _.each(g.links, function(d) {
-            d.passedThreshold = d.score > $scope.threshold && d.source.groupScore > 0.7 && d.target.groupScore > 0.7;
+            d.passedThreshold = d.score > $scope.threshold && d.source.groupScore > $scope.groupScoreThreshold && d.target.groupScore > $scope.groupScoreThreshold;
             if (d.passedThreshold) ++tmp;
             if ($scope.markBioGRIDEdges && d.labels.indexOf("BioGRID") > -1) d.marked = true;
             else d.marked = undefined;
@@ -654,6 +658,7 @@ angular.module('linkClientApp').controller('MainCtrl', ['$scope', '$http', '$loc
         // save our current search and threshold settings in the url
         $location.search('search', $scope.searchString);
         $location.search('threshold', $scope.threshold);
+        $location.search('groupScoreThreshold', $scope.groupScoreThreshold);
 
         // defer so the digest can complete and the directive will be in sync with the updated scope variables
         _.defer(function() { $scope.$broadcast('graphChange'); });

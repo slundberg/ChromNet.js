@@ -2,7 +2,7 @@
 
 <!-- https://jquerytools.github.io/documentation/rangeinput/index.html might help us improve this (so it looks the same on all platforms)-->
 <div id="thresholdValue">{{threshold | number:2}}</div>
-<input id="thresholdRange" ng-model="threshold" type="range" step="0.01" min="0.03" max="{{maxRangeBound}}">
+<input id="thresholdRange" ng-model="threshold" type="range" step="0.01" min="0.3" max="{{maxRangeBound}}">
 <div id="sliderMessageBox" align="right" ng-show="lowEdgeCount">
   <div class="arrow-up" style="margin-right: 10px"></div>
   <div id="sliderMessageText">Tip: lower the threshold to see more edges...</div>
@@ -29,6 +29,8 @@
   <input type="checkbox" ng-model="markBioGRIDEdges" /> mark edges representing known interactions in BioGRID<br/>
   <br>
   show no more than <input type="text" size="4" ng-model="maxMatches" /> nodes to allow for smooth animation<br/>
+  <br>
+  only show groups with correlation greater than <input type="text" size="4" ng-model="groupScoreThreshold" /><br/>
   <br>
   <div align="center">
     <button type="button" class="btn btn-default btn-sm" ng-click="downloadGraph()">

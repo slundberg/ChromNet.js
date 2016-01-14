@@ -113,7 +113,7 @@ angular.module('linkClientApp').directive('featureNetwork', function () { return
             //scope.nodes = scope.nodesRef.splice(0);
             scope.singleNodes = _.filter(scope.nodes, function(d) { return !d.group;});
             scope.groupNodes = _.filter(scope.nodes, function(d) { return d.group;}).reverse();
-            console.log("scope.groupNodes", scope.groupNodes);
+            //console.log("scope.groupNodes", scope.groupNodes);
 
             function nearestNodePos(node) {
                 var d = node;
