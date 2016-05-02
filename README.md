@@ -1,5 +1,5 @@
 # ChromNet.js
-ChromNet web client front end. http://chromnet.cs.washington.edu
+ChromNet web client front end for http://chromnet.cs.washington.edu. To build your own custom chromatin networks see the https://github.com/slundberg/ChromNet.jl package,
 
 ## Building
 
